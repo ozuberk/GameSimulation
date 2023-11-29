@@ -14,12 +14,25 @@ namespace GameSimulation.Adapters
     {
         public bool CheckIfRealPerson(Customer customer)
         {
-            KPSPublicSoapClient client = new KPSPublicSoapClient(EndpointConfiguration.KPSPublicSoap);
+            try
+            {
+                KPSPublicSoapClient client = new KPSPublicSoapClient(EndpointConfiguration.KPSPublicSoap);
 
-            var result = client.TCKimlikNoDogrulaAsync(Convert.ToInt64(customer.NationalityId), customer.CstmName.ToUpper(), customer.CstmLastName.ToUpper(), customer.DateOfBirth.Year).Result;
-            var body=result.Body;
+                var result = client.TCKimlikNoDogrulaAsync(
+                    Convert.ToInt64(customer.NationalityId),
+                    customer.CstmName.ToUpper(),
+                    customer.CstmLastName.ToUpper(),
+                    customer.DateOfBirth.Year).Result;
 
-            return body.TCKimlikNoDogrulaResult;
+                var body = result.Body;
+
+                return body.TCKimlikNoDogrulaResult;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata Oluştu :"+ex.Message);
+                return false;
+            }
         }
     }
 }
